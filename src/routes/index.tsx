@@ -50,10 +50,14 @@ const galleryImages = [
 ]
 
 const statusItems = [
-  { title: 'Arquitectura', label: 'Anteproyecto cerrado', progress: 92 },
-  { title: 'Construcción', label: 'Preparación de terreno', progress: 46 },
-  { title: 'Interiorismo', label: 'Materialidad en selección', progress: 64 },
-  { title: 'Paisajismo', label: 'Senderos y bosque nativo', progress: 38 },
+  { title: 'Arquitectura', label: 'Proyecto cerrado', progress: 100 },
+  { title: 'Construcción', label: 'Obra gruesa terminada', progress: 100 },
+  { title: 'Terminaciones', label: 'Etapa comenzando', progress: 12 },
+  {
+    title: 'Paisajismo natural',
+    label: 'Siempre creciendo y renovando',
+    progress: 72,
+  },
 ]
 
 const experiences = [
@@ -91,6 +95,28 @@ const experiences = [
 
 const locations = ['Malalcahuello', 'Corralco', 'Volcán Lonquimay', 'Araucarias']
 
+const pricePerPerson = {
+  lowSeason: 25000,
+  highSeason: 50000,
+}
+
+const pricingRows = Array.from({ length: 7 }, (_, index) => {
+  const guests = index + 4
+
+  return {
+    guests,
+    lowSeasonTotal: guests * pricePerPerson.lowSeason,
+    highSeasonTotal: guests * pricePerPerson.highSeason,
+  }
+})
+
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    maximumFractionDigits: 0,
+  }).format(price)
+
 type WaitlistFields = {
   name: string
   email: string
@@ -107,6 +133,7 @@ function LandingPage() {
       <ExperienceSection />
       <GallerySection />
       <LocationSection />
+      <PricingSection />
       <WaitlistSection />
       <FinalCtaSection />
       <Footer />
@@ -286,8 +313,8 @@ function GallerySection() {
             </h2>
           </div>
           <p className="max-w-md text-sm leading-7 text-[#D9D4C7]/72">
-            Imágenes de referencia para expresar la dirección visual:
-            arquitectura cálida, bosque profundo y nieve volcánica.
+            Imágenes recolectadas en nuestros viajes a Malalcahuello y sus
+            alrededores.
           </p>
         </div>
         <div className="grid auto-rows-[18rem] gap-3 md:grid-cols-12 md:auto-rows-[15rem]">
@@ -321,9 +348,15 @@ function LocationSection() {
             Ubicación
           </p>
           <h2 className="text-balance text-4xl font-semibold leading-tight tracking-[-0.03em] text-[#F3F1EC] sm:text-5xl">
-            A minutos del centro invernal, dentro de un paisaje que pide calma.
+            A minutos del centro de ski Corralco, dentro de un paisaje que pide
+            calma.
           </h2>
           <p className="mt-6 max-w-xl text-base leading-8 text-[#ECEBE7]/74">
+            A 5 minutos del centro de Malalcahuello, donde encontrarás
+            restaurantes, bares y más atractivos, junto a supermercados y
+            farmacias para que nada te falte.
+          </p>
+          <p className="mt-4 max-w-xl text-base leading-8 text-[#ECEBE7]/74">
             Malalcahuello reúne bosque nativo, termas cercanas, volcanes y una
             cultura de montaña silenciosa. KULLINKO toma esa energía sin
             sobreactuarla.
@@ -542,6 +575,117 @@ function WaitlistSection() {
   )
 }
 
+function PricingSection() {
+  return (
+    <section className="bg-[#F3F1EC] px-5 pt-20 text-[#202626] sm:px-8 lg:px-12 lg:pt-28">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1fr] lg:items-start">
+        <div>
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
+            Tarifas referenciales
+          </p>
+          <h2 className="text-balance text-4xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">
+            Una preventa simple, por persona y por temporada.
+          </h2>
+          <p className="mt-6 max-w-lg text-base leading-8 text-[#202626]/68">
+            El refugio se reserva completo. Los valores se calculan según el
+            número de personas y la temporada de viaje.
+          </p>
+        </div>
+        <PricingTable />
+      </div>
+    </section>
+  )
+}
+
+function PricingTable() {
+  return (
+    <div className="border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)]">
+      <div className="border-b border-[#202626]/10 p-5 sm:p-8">
+        <p className="mb-3 text-xs uppercase tracking-[0.32em] text-[#445543]/70">
+          Preventa refugio
+        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#202626]">
+              Tarifas por temporada
+            </h3>
+            <p className="mt-3 max-w-md text-sm leading-7 text-[#202626]/62">
+              Valores referenciales por persona, calculados por noche según la
+              temporada.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-px overflow-hidden border border-[#202626]/10 bg-[#202626]/10 text-center">
+            <div className="bg-[#F3F1EC] px-4 py-3">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#445543]/70">
+                Baja
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#202626]">
+                {formatPrice(pricePerPerson.lowSeason)} pp
+              </p>
+            </div>
+            <div className="bg-[#202626] px-4 py-3 text-[#F3F1EC]">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#D9D4C7]/70">
+                Alta
+              </p>
+              <p className="mt-1 text-sm font-semibold">
+                {formatPrice(pricePerPerson.highSeason)} pp
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[34rem] border-collapse text-left">
+          <thead>
+            <tr className="border-b border-[#202626]/10 text-[11px] uppercase tracking-[0.22em] text-[#202626]/48">
+              <th scope="col" className="px-5 py-4 font-semibold sm:px-8">
+                Refugio
+              </th>
+              <th scope="col" className="px-5 py-4 font-semibold">
+                <span className="block">Temporada baja</span>
+                <span className="mt-1 block text-[10px] font-medium tracking-[0.18em] text-[#202626]/38">
+                  Octubre a junio
+                </span>
+              </th>
+              <th scope="col" className="px-5 py-4 font-semibold">
+                <span className="block">Temporada alta</span>
+                <span className="mt-1 block text-[10px] font-medium tracking-[0.18em] text-[#202626]/38">
+                  Julio a septiembre
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {pricingRows.map((row) => (
+              <tr
+                key={row.guests}
+                className="border-b border-[#202626]/8 last:border-b-0"
+              >
+                <th
+                  scope="row"
+                  className="px-5 py-4 text-base font-semibold text-[#202626] sm:px-8"
+                >
+                  {row.guests} personas
+                </th>
+                <td className="px-5 py-4">
+                  <p className="text-base font-semibold text-[#202626]">
+                    {formatPrice(row.lowSeasonTotal)}
+                  </p>
+                </td>
+                <td className="px-5 py-4">
+                  <p className="text-base font-semibold text-[#202626]">
+                    {formatPrice(row.highSeasonTotal)}
+                  </p>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 function FinalCtaSection() {
   return (
     <section className="px-5 py-20 text-center sm:px-8 lg:px-12 lg:py-28">
@@ -568,12 +712,18 @@ function Footer() {
           KULLINKO
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-          <a className="transition hover:text-[#F3F1EC]" href="https://instagram.com/kullinko.refugio">
+          <a
+            className="transition hover:text-[#F3F1EC]"
+            href="https://www.instagram.com/kullinko.refugiomalalcahuello/"
+          >
             Instagram
           </a>
-          <a className="inline-flex items-center gap-2 transition hover:text-[#F3F1EC]" href="mailto:hola@kullinko.cl">
+          <a
+            className="inline-flex items-center gap-2 transition hover:text-[#F3F1EC]"
+            href="mailto:kullinkospa@gmail.com"
+          >
             <Mail className="h-4 w-4" aria-hidden="true" />
-            hola@kullinko.cl
+            kullinkospa@gmail.com
           </a>
           <p>© 2026 KULLINKO. Malalcahuello, Chile.</p>
         </div>
