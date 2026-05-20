@@ -13,13 +13,12 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title:
-          'Kullinko refugio en Malalcahuello a minutos de Centro de Ski Corralco',
+        title: 'KULLINKO - Refugio Ski Malalcahuello',
       },
       {
         name: 'description',
         content:
-          'Kullinko es un refugio de montaña en Malalcahuello, a minutos de Centro de Ski Corralco.',
+          'Kullinko refugio de montaña en Malalcahuello a minutos de Centro de Ski Corralco',
       },
     ],
     links: [
