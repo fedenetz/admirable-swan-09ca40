@@ -84,10 +84,14 @@ const refugeImages = {
 
 type Language = 'es' | 'en' | 'pt'
 
-const languageOptions: Array<{ code: Language; label: string }> = [
-  { code: 'es', label: 'Español' },
-  { code: 'en', label: 'English' },
-  { code: 'pt', label: 'Port (BR)' },
+const languageOptions: Array<{
+  code: Language
+  label: string
+  shortLabel: string
+}> = [
+  { code: 'es', label: 'Español', shortLabel: 'ES' },
+  { code: 'en', label: 'English', shortLabel: 'EN' },
+  { code: 'pt', label: 'Port (BR)', shortLabel: 'PT' },
 ]
 
 const copy = {
@@ -681,13 +685,15 @@ function HeroSection({
                 key={option.code}
                 type="button"
                 onClick={() => onLanguageChange(option.code)}
+                aria-label={option.label}
                 className={`min-h-11 rounded-full px-3 text-[10px] font-semibold uppercase tracking-[0.12em] transition sm:px-4 ${
                   language === option.code
                     ? 'bg-[#ECEBE7] text-[#202626]'
                     : 'text-[#ECEBE7]/72 hover:bg-[#ECEBE7]/10 hover:text-[#F3F1EC]'
                 }`}
               >
-                {option.label}
+                <span className="sm:hidden">{option.shortLabel}</span>
+                <span className="hidden sm:inline">{option.label}</span>
               </button>
             ))}
           </div>
@@ -1242,7 +1248,7 @@ function WaitlistSection({ t }: { t: Copy }) {
 function PricingSection({ t }: { t: Copy }) {
   return (
     <section className="bg-[#F3F1EC] px-5 pt-20 text-[#202626] sm:px-8 lg:px-12 lg:pt-28">
-      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1fr] lg:items-start">
+      <div className="mx-auto grid max-w-7xl gap-12 xl:grid-cols-[.72fr_1fr] xl:items-start">
         <Reveal>
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
             {t.pricing.eyebrow}
@@ -1262,12 +1268,12 @@ function PricingSection({ t }: { t: Copy }) {
 
 function PricingTable({ t }: { t: Copy }) {
   return (
-    <Reveal className="border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)]">
+    <Reveal className="min-w-0 border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)]">
       <div className="border-b border-[#202626]/10 p-5 sm:p-8">
         <p className="mb-3 text-xs uppercase tracking-[0.32em] text-[#445543]/70">
           {t.pricing.cardEyebrow}
         </p>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h3 className="text-3xl font-semibold tracking-[-0.03em] text-[#202626]">
               {t.pricing.cardTitle}
@@ -1281,7 +1287,7 @@ function PricingTable({ t }: { t: Copy }) {
               <p className="text-[10px] uppercase tracking-[0.24em] text-[#445543]/70">
                 {t.pricing.lowChip}
               </p>
-              <p className="mt-1 text-sm font-semibold text-[#202626]">
+              <p className="mt-1 text-sm font-semibold leading-5 text-[#202626]">
                 {formatPrice(pricePerPerson.lowSeason)} {t.pricing.perPersonShort}
               </p>
             </div>
@@ -1289,7 +1295,7 @@ function PricingTable({ t }: { t: Copy }) {
               <p className="text-[10px] uppercase tracking-[0.24em] text-[#D9D4C7]/70">
                 {t.pricing.highChip}
               </p>
-              <p className="mt-1 text-sm font-semibold">
+              <p className="mt-1 text-sm font-semibold leading-5">
                 {formatPrice(pricePerPerson.highSeason)} {t.pricing.perPersonShort}
               </p>
             </div>
@@ -1297,19 +1303,19 @@ function PricingTable({ t }: { t: Copy }) {
         </div>
       </div>
       <div>
-        <table className="hidden w-full border-collapse text-left sm:table">
+        <table className="hidden w-full table-fixed border-collapse text-left md:table">
           <thead>
             <tr className="border-b border-[#202626]/10 text-[11px] uppercase tracking-[0.22em] text-[#202626]/48">
-              <th scope="col" className="px-5 py-4 font-semibold sm:px-8">
+              <th scope="col" className="w-[32%] px-5 py-4 font-semibold lg:px-8">
                 {t.pricing.refuge}
               </th>
-              <th scope="col" className="px-5 py-4 font-semibold">
+              <th scope="col" className="w-[34%] px-5 py-4 font-semibold">
                 <span className="block">{t.pricing.lowSeason}</span>
                 <span className="mt-1 block text-[10px] font-medium tracking-[0.18em] text-[#202626]/38">
                   {t.pricing.lowSeasonMonths}
                 </span>
               </th>
-              <th scope="col" className="px-5 py-4 font-semibold">
+              <th scope="col" className="w-[34%] px-5 py-4 font-semibold">
                 <span className="block">{t.pricing.highSeason}</span>
                 <span className="mt-1 block text-[10px] font-medium tracking-[0.18em] text-[#202626]/38">
                   {t.pricing.highSeasonMonths}
@@ -1325,7 +1331,7 @@ function PricingTable({ t }: { t: Copy }) {
               >
                 <th
                   scope="row"
-                  className="px-5 py-4 text-base font-semibold text-[#202626] sm:px-8"
+                  className="px-5 py-4 text-base font-semibold text-[#202626] lg:px-8"
                 >
                   {t.pricing.guests(row.guests)}
                 </th>
@@ -1343,7 +1349,7 @@ function PricingTable({ t }: { t: Copy }) {
             ))}
           </tbody>
         </table>
-        <div className="grid gap-3 p-4 sm:hidden">
+        <div className="grid gap-3 p-4 md:hidden">
           {pricingRows.map((row) => (
             <article
               key={row.guests}
