@@ -32,13 +32,48 @@ img {
   max-width: 100%;
 }
 
+.hero-enter {
+  animation: hero-enter 700ms ease-out both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 760ms ease,
+    transform 760ms ease;
+}
+
+.reveal[data-revealed='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 button,
 a,
 input {
   -webkit-tap-highlight-color: transparent;
 }
 
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hero-enter,
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {

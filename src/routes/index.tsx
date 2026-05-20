@@ -1,10 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ArrowDown,
+  BedDouble,
   Coffee,
+  CookingPot,
   Flame,
   Mail,
+  MapPin,
   MountainSnow,
+  Navigation,
   Send,
   Snowflake,
   Sparkles,
@@ -12,14 +16,21 @@ import {
   Trees,
   UsersRound,
 } from 'lucide-react'
-import { useState, type ChangeEvent, type FormEvent } from 'react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from 'react'
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
 })
 
 const heroImage =
-  'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=2400&q=85'
+  '/images/hero.png'
 
 const galleryImages = [
   {
@@ -59,6 +70,17 @@ const experienceIcons = [
   Flame,
   UsersRound,
 ]
+
+const refugeImages = {
+  chucao: {
+    wide: '/images/refugios/chucao-wide.png',
+    vertical: '/images/refugios/chucao-vertical.png',
+  },
+  carpintero: {
+    wide: '/images/refugios/carpintero-wide.png',
+    vertical: '/images/refugios/carpintero-vertical.png',
+  },
+}
 
 type Language = 'es' | 'en' | 'pt'
 
@@ -142,6 +164,14 @@ const copy = {
       landscape:
         'Malalcahuello reúne bosque nativo, termas cercanas, volcanes y una cultura de montaña silenciosa. KULLINKO toma esa energía sin sobreactuarla.',
       territory: 'Territorio',
+      mapEyebrow: 'Mapa referencial',
+      mapNote: 'Área general Caracoles. Ubicación exacta disponible en la reserva.',
+      mapLabels: {
+        town: 'Malalcahuello',
+        ski: 'Centro Ski Corralco',
+        area: 'Caracoles',
+        route: 'Ruta hacia Corralco',
+      },
       places: ['Malalcahuello', 'Corralco', 'Volcán Lonquimay', 'Araucarias'],
     },
     pricing: {
@@ -151,7 +181,7 @@ const copy = {
       cardEyebrow: 'Preventa refugio',
       cardTitle: 'Tarifas por temporada',
       cardText:
-        'Valores referenciales por persona, calculados por noche según la temporada.',
+        'Valores referenciales por persona, calculados por noche según número de personas y temporada.',
       lowChip: 'Baja',
       highChip: 'Alta',
       perPersonShort: 'pp',
@@ -161,6 +191,27 @@ const copy = {
       highSeason: 'Temporada alta',
       highSeasonMonths: 'Julio a septiembre',
       guests: (count: number) => `${count} personas`,
+    },
+    refuges: {
+      eyebrow: 'Refugios disponibles',
+      title: 'Dos refugios, una misma forma de habitar la montaña.',
+      text: 'Chucao y Carpintero comparten distribución, capacidad y equipamiento: espacios cálidos para grupos familiares o estadías con amigos.',
+      capacity: 'Hasta 10 personas',
+      layout: '2 habitaciones · 2 baños · altillo',
+      kitchen: 'Cocina completa',
+      heating: 'Calefacción con caldera a combustión lenta de leña',
+      items: [
+        {
+          key: 'chucao',
+          name: 'Refugio Chucao',
+          alt: 'Refugio Chucao de KULLINKO en entorno de bosque',
+        },
+        {
+          key: 'carpintero',
+          name: 'Refugio Carpintero',
+          alt: 'Refugio Carpintero de KULLINKO en entorno de bosque',
+        },
+      ],
     },
     waitlist: {
       eyebrow: 'Lista privada',
@@ -262,6 +313,14 @@ const copy = {
       landscape:
         'Malalcahuello brings together native forest, nearby hot springs, volcanoes, and a quiet mountain culture. KULLINKO carries that energy without overplaying it.',
       territory: 'Territory',
+      mapEyebrow: 'Reference map',
+      mapNote: 'General Caracoles area. Exact location available upon booking.',
+      mapLabels: {
+        town: 'Malalcahuello',
+        ski: 'Corralco Ski Center',
+        area: 'Caracoles',
+        route: 'Route to Corralco',
+      },
       places: ['Malalcahuello', 'Corralco', 'Lonquimay Volcano', 'Araucarias'],
     },
     pricing: {
@@ -271,7 +330,7 @@ const copy = {
       cardEyebrow: 'Refuge presale',
       cardTitle: 'Seasonal rates',
       cardText:
-        'Reference prices per person, calculated per night according to the season.',
+        'Reference prices per person, calculated per night by number of guests and season.',
       lowChip: 'Low',
       highChip: 'High',
       perPersonShort: 'pp',
@@ -281,6 +340,27 @@ const copy = {
       highSeason: 'High season',
       highSeasonMonths: 'July to September',
       guests: (count: number) => `${count} guests`,
+    },
+    refuges: {
+      eyebrow: 'Available refuges',
+      title: 'Two refuges, one shared way of inhabiting the mountain.',
+      text: 'Chucao and Carpintero share the same layout, capacity, and equipment: warm spaces for family groups or stays with friends.',
+      capacity: 'Up to 10 guests',
+      layout: '2 bedrooms · 2 bathrooms · loft',
+      kitchen: 'Full kitchen',
+      heating: 'Slow-combustion wood boiler heating',
+      items: [
+        {
+          key: 'chucao',
+          name: 'Refugio Chucao',
+          alt: 'KULLINKO Chucao refuge in a forest setting',
+        },
+        {
+          key: 'carpintero',
+          name: 'Refugio Carpintero',
+          alt: 'KULLINKO Carpintero refuge in a forest setting',
+        },
+      ],
     },
     waitlist: {
       eyebrow: 'Private waitlist',
@@ -382,6 +462,14 @@ const copy = {
       landscape:
         'Malalcahuello reúne bosque nativo, termas próximas, vulcões e uma cultura de montanha silenciosa. KULLINKO toma essa energia sem exagerar.',
       territory: 'Território',
+      mapEyebrow: 'Mapa referencial',
+      mapNote: 'Área geral Caracoles. Localização exata disponível na reserva.',
+      mapLabels: {
+        town: 'Malalcahuello',
+        ski: 'Centro Ski Corralco',
+        area: 'Caracoles',
+        route: 'Rota até Corralco',
+      },
       places: ['Malalcahuello', 'Corralco', 'Vulcão Lonquimay', 'Araucárias'],
     },
     pricing: {
@@ -391,7 +479,7 @@ const copy = {
       cardEyebrow: 'Pré-venda refúgio',
       cardTitle: 'Tarifas por temporada',
       cardText:
-        'Valores referenciais por pessoa, calculados por noite conforme a temporada.',
+        'Valores referenciais por pessoa, calculados por noite segundo número de pessoas e temporada.',
       lowChip: 'Baixa',
       highChip: 'Alta',
       perPersonShort: 'pp',
@@ -401,6 +489,27 @@ const copy = {
       highSeason: 'Temporada alta',
       highSeasonMonths: 'Julho a setembro',
       guests: (count: number) => `${count} pessoas`,
+    },
+    refuges: {
+      eyebrow: 'Refúgios disponíveis',
+      title: 'Dois refúgios, uma mesma forma de habitar a montanha.',
+      text: 'Chucao e Carpintero compartilham a mesma distribuição, capacidade e equipamento: espaços acolhedores para grupos familiares ou estadias com amigos.',
+      capacity: 'Até 10 pessoas',
+      layout: '2 quartos · 2 banheiros · mezanino',
+      kitchen: 'Cozinha completa',
+      heating: 'Aquecimento com caldeira a combustão lenta de lenha',
+      items: [
+        {
+          key: 'chucao',
+          name: 'Refúgio Chucao',
+          alt: 'Refúgio Chucao da KULLINKO em ambiente de bosque',
+        },
+        {
+          key: 'carpintero',
+          name: 'Refúgio Carpintero',
+          alt: 'Refúgio Carpintero da KULLINKO em ambiente de bosque',
+        },
+      ],
     },
     waitlist: {
       eyebrow: 'Lista privada',
@@ -455,6 +564,54 @@ const formatPrice = (price: number) =>
     maximumFractionDigits: 0,
   }).format(price)
 
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches
+
+    if (prefersReducedMotion) {
+      element.dataset.revealed = 'true'
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        element.dataset.revealed = 'true'
+        observer.disconnect()
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.12 },
+    )
+
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`reveal ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  )
+}
+
 type WaitlistFields = {
   name: string
   email: string
@@ -482,6 +639,7 @@ function LandingPage() {
       <GallerySection t={t} />
       <LocationSection t={t} />
       <PricingSection t={t} />
+      <RefugesSection t={t} />
       <WaitlistSection t={t} />
       <FinalCtaSection t={t} />
       <Footer t={t} />
@@ -501,21 +659,21 @@ function HeroSection({
   return (
     <section
       id="top"
-      className="relative flex min-h-screen items-end overflow-hidden px-5 pb-10 pt-28 sm:px-8 lg:px-12 lg:pb-14"
+      className="relative flex min-h-screen items-end overflow-hidden px-5 pb-12 pt-32 sm:px-8 lg:px-12 lg:pb-14"
     >
       <img
         src={heroImage}
         alt={t.hero.imageAlt}
         className="absolute inset-0 h-full w-full scale-105 object-cover"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(32,38,38,.34)_0%,rgba(32,38,38,.66)_48%,rgba(32,38,38,.96)_100%)]" />
-      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-5 py-5 text-[11px] uppercase tracking-[0.24em] text-[#ECEBE7]/80 sm:px-8 lg:px-12">
-        <a href="#top" className="font-semibold text-[#F3F1EC]">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(32,38,38,.26)_0%,rgba(32,38,38,.52)_46%,rgba(32,38,38,.94)_100%)]" />
+      <div className="fixed inset-x-0 top-0 z-20 flex min-h-20 items-center justify-between gap-3 border-b border-[#ECEBE7]/8 bg-[#202626]/30 px-5 py-3 text-[11px] uppercase tracking-[0.2em] text-[#ECEBE7]/80 backdrop-blur-md sm:px-8 lg:px-12">
+        <a href="#top" className="flex min-h-11 items-center font-semibold text-[#F3F1EC]">
           KULLINKO
         </a>
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <div
-            className="flex rounded-full border border-[#ECEBE7]/20 bg-[#202626]/35 p-1 backdrop-blur"
+            className="flex rounded-full border border-[#ECEBE7]/18 bg-[#202626]/42 p-1 backdrop-blur"
             aria-label="Language selector"
           >
             {languageOptions.map((option) => (
@@ -523,7 +681,7 @@ function HeroSection({
                 key={option.code}
                 type="button"
                 onClick={() => onLanguageChange(option.code)}
-                className={`rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] transition ${
+                className={`min-h-11 rounded-full px-3 text-[10px] font-semibold uppercase tracking-[0.12em] transition sm:px-4 ${
                   language === option.code
                     ? 'bg-[#ECEBE7] text-[#202626]'
                     : 'text-[#ECEBE7]/72 hover:bg-[#ECEBE7]/10 hover:text-[#F3F1EC]'
@@ -535,18 +693,18 @@ function HeroSection({
           </div>
           <a
             href="#waitlist"
-            className="rounded-full border border-[#ECEBE7]/25 px-4 py-2 transition hover:border-[#ECEBE7]/70 hover:bg-[#ECEBE7]/10"
+            className="hidden min-h-11 items-center rounded-full border border-[#ECEBE7]/22 px-4 transition hover:border-[#ECEBE7]/70 hover:bg-[#ECEBE7]/10 sm:inline-flex"
           >
             {t.navWaitlist}
           </a>
         </div>
       </div>
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1fr_.45fr] lg:items-end">
+      <div className="hero-enter relative z-10 mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1fr_.45fr] lg:items-end">
         <div className="max-w-5xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.42em] text-[#D9D4C7]/80">
+          <p className="mb-5 text-xs uppercase tracking-[0.32em] text-[#D9D4C7]/84 sm:mb-6 sm:tracking-[0.42em]">
             {t.hero.eyebrow}
           </p>
-          <h1 className="max-w-5xl text-balance text-6xl font-semibold leading-[0.92] tracking-[-0.04em] text-[#F3F1EC] sm:text-7xl md:text-8xl lg:text-[7.8rem]">
+          <h1 className="max-w-5xl text-balance text-5xl font-semibold leading-[1.03] tracking-[-0.035em] text-[#F3F1EC] [text-shadow:0_2px_28px_rgba(32,38,38,.58)] sm:text-7xl sm:leading-[.96] md:text-8xl lg:text-[7.8rem]">
             {t.hero.title}
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-[#ECEBE7]/82 sm:text-xl">
@@ -580,7 +738,7 @@ function ProjectStatusSection({ t }: { t: Copy }) {
   return (
     <section id="proyecto" className="relative px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 grid gap-6 lg:grid-cols-[.6fr_1fr] lg:items-end">
+        <Reveal className="mb-12 grid gap-6 lg:grid-cols-[.6fr_1fr] lg:items-end">
           <div>
             <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#D9D4C7]/65">
               {t.project.eyebrow}
@@ -592,11 +750,12 @@ function ProjectStatusSection({ t }: { t: Copy }) {
           <p className="max-w-2xl text-base leading-8 text-[#D9D4C7]/78 lg:justify-self-end">
             {t.project.text}
           </p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        </Reveal>
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
           {t.project.items.map((item, index) => (
-            <article
+            <Reveal
               key={item.title}
+              delay={index * 90}
               className="group border border-[#ECEBE7]/12 bg-[#2C262C]/34 p-6 backdrop-blur transition duration-300 hover:-translate-y-1 hover:border-[#D9D4C7]/35 hover:bg-[#2C262C]/52"
             >
               <div className="mb-10 flex items-start justify-between">
@@ -619,14 +778,14 @@ function ProjectStatusSection({ t }: { t: Copy }) {
                   <span>{t.project.progressLabel}</span>
                   <span>{progressValues[index]}%</span>
                 </div>
-                <div className="h-px bg-[#ECEBE7]/13">
+                <div className="h-1 overflow-hidden rounded-full bg-[#ECEBE7]/13">
                   <div
-                    className="h-px bg-[#D9D4C7] transition-all duration-700 group-hover:bg-[#F3F1EC]"
+                    className="h-full rounded-full bg-[#D9D4C7] transition-all duration-700 group-hover:bg-[#F3F1EC]"
                     style={{ width: `${progressValues[index]}%` }}
                   />
                 </div>
               </div>
-            </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -638,24 +797,25 @@ function ExperienceSection({ t }: { t: Copy }) {
   return (
     <section className="bg-[#ECEBE7] px-5 py-20 text-[#202626] sm:px-8 lg:px-12 lg:py-28">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 max-w-3xl">
+        <Reveal className="mb-12 max-w-3xl">
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
             {t.experience.eyebrow}
           </p>
           <h2 className="text-balance text-4xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">
             {t.experience.title}
           </h2>
-        </div>
-        <div className="grid gap-px overflow-hidden bg-[#202626]/12 md:grid-cols-2 lg:grid-cols-3">
+        </Reveal>
+        <div className="grid border-y border-[#202626]/12 md:grid-cols-2 lg:grid-cols-3">
           {t.experience.items.map((experience, index) => {
             const Icon = experienceIcons[index]
             return (
-              <article
+              <Reveal
                 key={experience.title}
-                className="group min-h-64 bg-[#ECEBE7] p-6 transition duration-300 hover:bg-[#D9D4C7]"
+                delay={index * 70}
+                className="group min-h-64 border-b border-[#202626]/10 bg-[#ECEBE7] px-0 py-7 transition duration-300 hover:bg-[#D9D4C7]/45 md:border-r md:px-7 lg:[&:nth-child(3n)]:border-r-0"
               >
-                <div className="mb-12 flex h-11 w-11 items-center justify-center rounded-full border border-[#445543]/25 text-[#445543] transition group-hover:scale-105 group-hover:bg-[#445543] group-hover:text-[#ECEBE7]">
-                  <Icon className="h-5 w-5" aria-hidden="true" />
+                <div className="mb-10 flex h-11 w-11 items-center justify-center text-[#445543] transition group-hover:-translate-y-0.5 group-hover:text-[#202626]">
+                  <Icon className="h-6 w-6 stroke-[1.45]" aria-hidden="true" />
                 </div>
                 <h3 className="text-2xl font-semibold tracking-[-0.02em]">
                   {experience.title}
@@ -663,7 +823,7 @@ function ExperienceSection({ t }: { t: Copy }) {
                 <p className="mt-4 max-w-sm text-sm leading-7 text-[#202626]/68">
                   {experience.text}
                 </p>
-              </article>
+              </Reveal>
             )
           })}
         </div>
@@ -676,7 +836,7 @@ function GallerySection({ t }: { t: Copy }) {
   return (
     <section className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <Reveal className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#D9D4C7]/65">
               {t.gallery.eyebrow}
@@ -688,21 +848,23 @@ function GallerySection({ t }: { t: Copy }) {
           <p className="max-w-md text-sm leading-7 text-[#D9D4C7]/72">
             {t.gallery.text}
           </p>
-        </div>
-        <div className="grid auto-rows-[18rem] gap-3 md:grid-cols-12 md:auto-rows-[15rem]">
-          {galleryImages.map((image) => (
-            <figure
+        </Reveal>
+        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-12 md:auto-rows-[15rem]">
+          {galleryImages.map((image, index) => (
+            <Reveal
               key={image.src}
-              className={`group relative overflow-hidden bg-[#2C262C] ${image.className}`}
+              delay={index * 80}
+              className={`group relative aspect-[4/3] overflow-hidden bg-[#2C262C] md:aspect-auto ${image.className}`}
             >
               <img
                 src={image.src}
                 alt={image.alt}
                 loading="lazy"
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                decoding="async"
+                className="h-full w-full object-cover opacity-95 transition duration-700 group-hover:scale-[1.02] group-hover:opacity-100"
               />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(32,38,38,0)_35%,rgba(32,38,38,.62)_100%)] opacity-80" />
-            </figure>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -710,12 +872,33 @@ function GallerySection({ t }: { t: Copy }) {
   )
 }
 
+function MapMarker({
+  className,
+  label,
+}: {
+  className: string
+  label: string
+}) {
+  return (
+    <div
+      className={`absolute z-10 flex max-w-[13rem] items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#ECEBE7] ${className}`}
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#D9D4C7]/45 bg-[#202626]/86 shadow-[0_10px_26px_rgba(0,0,0,.25)]">
+        <MapPin className="h-4 w-4 text-[#D9D4C7]" aria-hidden="true" />
+      </span>
+      <span className="rounded-full border border-[#ECEBE7]/12 bg-[#202626]/68 px-3 py-1.5 backdrop-blur">
+        {label}
+      </span>
+    </div>
+  )
+}
+
 function LocationSection({ t }: { t: Copy }) {
   return (
     <section className="relative overflow-hidden px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(217,212,199,.16),transparent_34%),linear-gradient(135deg,#202626_0%,#445543_48%,#2C262C_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,#202626_0%,#27302D_42%,#445543_100%)]" />
       <div className="relative mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1fr] lg:items-center">
-        <div>
+        <Reveal>
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#D9D4C7]/65">
             {t.location.eyebrow}
           </p>
@@ -728,12 +911,125 @@ function LocationSection({ t }: { t: Copy }) {
           <p className="mt-4 max-w-xl text-base leading-8 text-[#ECEBE7]/74">
             {t.location.landscape}
           </p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        </Reveal>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Reveal className="relative min-h-[27rem] overflow-hidden border border-[#ECEBE7]/14 bg-[#202626]/38 p-5 shadow-[0_24px_90px_rgba(0,0,0,.18)] backdrop-blur sm:col-span-2 sm:p-6">
+            <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(68,85,67,.34),rgba(32,38,38,.08)),radial-gradient(circle_at_20%_77%,rgba(217,212,199,.13),transparent_20%),radial-gradient(circle_at_75%_18%,rgba(236,235,231,.12),transparent_19%)]" />
+            <div className="absolute inset-5 border border-[#D9D4C7]/10" />
+            <svg
+              className="absolute inset-0 h-full w-full"
+              viewBox="0 0 640 430"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M-20 358 C88 338 136 360 214 336 C288 314 354 320 438 292 C514 266 570 268 668 244"
+                fill="none"
+                stroke="rgba(236,235,231,.11)"
+                strokeLinecap="round"
+                strokeWidth="2"
+              />
+              <path
+                d="M-30 288 C62 306 122 286 194 294 C272 302 320 274 400 270 C488 266 546 242 670 238"
+                fill="none"
+                stroke="rgba(236,235,231,.08)"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M32 116 C108 132 172 112 248 124 C326 136 392 112 474 126 C548 138 590 126 664 136"
+                fill="none"
+                stroke="rgba(236,235,231,.07)"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M28 338 C120 324 196 330 272 318 C356 304 450 300 604 282"
+                fill="none"
+                stroke="rgba(236,235,231,.24)"
+                strokeLinecap="round"
+                strokeWidth="3"
+              />
+              <path
+                d="M86 364 C158 356 220 364 288 350 C344 338 386 326 424 298"
+                fill="none"
+                stroke="rgba(125,177,190,.28)"
+                strokeLinecap="round"
+                strokeWidth="2"
+              />
+              <path
+                d="M132 326 L224 318 C284 314 318 336 360 314 C398 294 414 268 448 242 C486 212 504 178 494 136 C488 106 474 86 452 68"
+                fill="none"
+                stroke="rgba(32,38,38,.55)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="13"
+              />
+              <path
+                d="M132 326 L224 318 C284 314 318 336 360 314 C398 294 414 268 448 242 C486 212 504 178 494 136 C488 106 474 86 452 68"
+                fill="none"
+                stroke="#D9D4C7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="5"
+              />
+              <path
+                d="M132 326 L224 318 C284 314 318 336 360 314"
+                fill="none"
+                stroke="rgba(32,38,38,.36)"
+                strokeLinecap="round"
+                strokeDasharray="2 13"
+                strokeWidth="2"
+              />
+              <ellipse
+                cx="360"
+                cy="318"
+                rx="82"
+                ry="38"
+                fill="rgba(217,212,199,.18)"
+                stroke="rgba(217,212,199,.42)"
+                strokeDasharray="6 8"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M330 344 L286 366"
+                fill="none"
+                stroke="rgba(217,212,199,.55)"
+                strokeLinecap="round"
+                strokeWidth="1.5"
+              />
+            </svg>
+            <div className="relative z-10 flex items-start justify-between gap-5">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#D9D4C7]/60">
+                  {t.location.mapEyebrow}
+                </p>
+                <p className="mt-2 max-w-xs text-sm leading-6 text-[#ECEBE7]/72">
+                  {t.location.mapNote}
+                </p>
+              </div>
+              <Navigation className="h-5 w-5 shrink-0 text-[#D9D4C7]/70" aria-hidden="true" />
+            </div>
+            <MapMarker
+              className="left-[10%] top-[74%]"
+              label={t.location.mapLabels.town}
+            />
+            <MapMarker
+              className="left-[64%] top-[13%]"
+              label={t.location.mapLabels.ski}
+            />
+            <div className="absolute left-[35%] top-[82%] z-10 max-w-[12rem] -translate-x-1/2 rounded-full border border-[#D9D4C7]/35 bg-[#D9D4C7] px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#202626] shadow-[0_12px_34px_rgba(0,0,0,.24)]">
+              {t.location.mapLabels.area}
+            </div>
+            <div className="absolute left-[69%] top-[48%] z-10 hidden -translate-x-1/2 rounded-full border border-[#ECEBE7]/12 bg-[#202626]/70 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[#ECEBE7]/62 sm:block">
+              {t.location.mapLabels.route}
+            </div>
+          </Reveal>
           {t.location.places.map((location, index) => (
-            <div
+            <Reveal
               key={location}
-              className="border border-[#ECEBE7]/14 bg-[#202626]/35 p-6 backdrop-blur transition hover:-translate-y-1 hover:border-[#ECEBE7]/36 hover:bg-[#202626]/50"
+              delay={index * 80}
+              className="border border-[#ECEBE7]/14 bg-[#202626]/35 p-6 shadow-[0_20px_70px_rgba(0,0,0,.12)] backdrop-blur transition hover:-translate-y-1 hover:border-[#ECEBE7]/36 hover:bg-[#202626]/50"
             >
               <MountainSnow
                 className="mb-10 h-5 w-5 text-[#D9D4C7]"
@@ -745,7 +1041,7 @@ function LocationSection({ t }: { t: Copy }) {
               <h3 className="mt-3 text-2xl font-semibold tracking-[-0.02em]">
                 {location}
               </h3>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -839,7 +1135,7 @@ function WaitlistSection({ t }: { t: Copy }) {
       className="bg-[#F3F1EC] px-5 py-20 text-[#202626] sm:px-8 lg:px-12 lg:py-28"
     >
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1fr] lg:items-start">
-        <div>
+        <Reveal>
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
             {t.waitlist.eyebrow}
           </p>
@@ -849,7 +1145,7 @@ function WaitlistSection({ t }: { t: Copy }) {
           <p className="mt-6 max-w-lg text-base leading-8 text-[#202626]/68">
             {t.waitlist.text}
           </p>
-        </div>
+        </Reveal>
         <form
           name="kullinko-waitlist"
           method="POST"
@@ -886,7 +1182,9 @@ function WaitlistSection({ t }: { t: Copy }) {
                 onChange={handleChange}
                 autoComplete="name"
                 required
-                className="h-14 rounded-none border border-[#202626]/16 bg-[#F3F1EC] px-4 text-base text-[#202626] outline-none transition placeholder:text-[#202626]/38 focus:border-[#445543] focus:ring-2 focus:ring-[#445543]/18"
+                className={`h-14 rounded-none border bg-[#F3F1EC] px-4 text-base text-[#202626] outline-none transition placeholder:text-[#202626]/38 focus:border-[#445543] focus:ring-2 focus:ring-[#445543]/18 ${
+                  error ? 'border-[#7A3D2E]/42' : 'border-[#202626]/16'
+                }`}
                 placeholder={t.waitlist.namePlaceholder}
               />
             </label>
@@ -899,7 +1197,9 @@ function WaitlistSection({ t }: { t: Copy }) {
                 onChange={handleChange}
                 autoComplete="email"
                 required
-                className="h-14 rounded-none border border-[#202626]/16 bg-[#F3F1EC] px-4 text-base text-[#202626] outline-none transition placeholder:text-[#202626]/38 focus:border-[#445543] focus:ring-2 focus:ring-[#445543]/18"
+                className={`h-14 rounded-none border bg-[#F3F1EC] px-4 text-base text-[#202626] outline-none transition placeholder:text-[#202626]/38 focus:border-[#445543] focus:ring-2 focus:ring-[#445543]/18 ${
+                  error ? 'border-[#7A3D2E]/42' : 'border-[#202626]/16'
+                }`}
                 placeholder={t.waitlist.emailPlaceholder}
               />
             </label>
@@ -925,12 +1225,12 @@ function WaitlistSection({ t }: { t: Copy }) {
           <button
             type="submit"
             disabled={state === 'submitting'}
-            className="mt-7 inline-flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#202626] px-6 text-sm font-semibold uppercase tracking-[0.14em] text-[#F3F1EC] transition hover:-translate-y-0.5 hover:bg-[#445543] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-7 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-[#202626] px-6 text-sm font-semibold uppercase tracking-[0.14em] text-[#F3F1EC] shadow-[0_14px_34px_rgba(32,38,38,.18)] transition hover:-translate-y-0.5 hover:bg-[#445543] focus:outline-none focus:ring-2 focus:ring-[#445543]/30 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {state === 'submitting' ? t.waitlist.submitting : t.waitlist.submit}
             <Send className="h-4 w-4" aria-hidden="true" />
           </button>
-          <p className="mt-5 text-xs leading-6 text-[#202626]/52">
+          <p className="mt-5 text-sm leading-7 text-[#202626]/58">
             {t.waitlist.note}
           </p>
         </form>
@@ -943,7 +1243,7 @@ function PricingSection({ t }: { t: Copy }) {
   return (
     <section className="bg-[#F3F1EC] px-5 pt-20 text-[#202626] sm:px-8 lg:px-12 lg:pt-28">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.8fr_1fr] lg:items-start">
-        <div>
+        <Reveal>
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
             {t.pricing.eyebrow}
           </p>
@@ -953,7 +1253,7 @@ function PricingSection({ t }: { t: Copy }) {
           <p className="mt-6 max-w-lg text-base leading-8 text-[#202626]/68">
             {t.pricing.text}
           </p>
-        </div>
+        </Reveal>
         <PricingTable t={t} />
       </div>
     </section>
@@ -962,7 +1262,7 @@ function PricingSection({ t }: { t: Copy }) {
 
 function PricingTable({ t }: { t: Copy }) {
   return (
-    <div className="border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)]">
+    <Reveal className="border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)]">
       <div className="border-b border-[#202626]/10 p-5 sm:p-8">
         <p className="mb-3 text-xs uppercase tracking-[0.32em] text-[#445543]/70">
           {t.pricing.cardEyebrow}
@@ -996,8 +1296,8 @@ function PricingTable({ t }: { t: Copy }) {
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[34rem] border-collapse text-left">
+      <div>
+        <table className="hidden w-full border-collapse text-left sm:table">
           <thead>
             <tr className="border-b border-[#202626]/10 text-[11px] uppercase tracking-[0.22em] text-[#202626]/48">
               <th scope="col" className="px-5 py-4 font-semibold sm:px-8">
@@ -1043,45 +1343,155 @@ function PricingTable({ t }: { t: Copy }) {
             ))}
           </tbody>
         </table>
+        <div className="grid gap-3 p-4 sm:hidden">
+          {pricingRows.map((row) => (
+            <article
+              key={row.guests}
+              className="border border-[#202626]/10 bg-[#F3F1EC] p-4"
+            >
+              <p className="text-sm font-semibold text-[#202626]">
+                {t.pricing.guests(row.guests)}
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#445543]/72">
+                    {t.pricing.lowSeason}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-[#202626]">
+                    {formatPrice(row.lowSeasonTotal)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-[#445543]/72">
+                    {t.pricing.highSeason}
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-[#202626]">
+                    {formatPrice(row.highSeasonTotal)}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
+    </Reveal>
+  )
+}
+
+function RefugesSection({ t }: { t: Copy }) {
+  return (
+    <section className="bg-[#D9D4C7] px-5 py-20 text-[#202626] sm:px-8 lg:px-12 lg:py-28">
+      <div className="mx-auto max-w-7xl">
+        <Reveal className="mb-12 grid gap-6 lg:grid-cols-[.58fr_1fr] lg:items-end">
+          <div>
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#445543]/70">
+              {t.refuges.eyebrow}
+            </p>
+            <h2 className="text-balance text-4xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">
+              {t.refuges.title}
+            </h2>
+          </div>
+          <p className="max-w-2xl text-base leading-8 text-[#202626]/68 lg:justify-self-end">
+            {t.refuges.text}
+          </p>
+        </Reveal>
+
+        <div className="grid gap-5 lg:gap-6">
+          {t.refuges.items.map((refuge, index) => {
+            const images = refugeImages[refuge.key as keyof typeof refugeImages]
+
+            return (
+              <Reveal
+                key={refuge.key}
+                delay={index * 90}
+                className="grid overflow-hidden border border-[#202626]/12 bg-[#ECEBE7] shadow-[0_28px_80px_rgba(32,38,38,.10)] lg:grid-cols-[1.08fr_.92fr]"
+              >
+                <picture className="block aspect-[4/5] overflow-hidden bg-[#202626] sm:aspect-[16/9] lg:aspect-auto lg:min-h-[28rem]">
+                  <source media="(min-width: 768px)" srcSet={images.wide} />
+                  <img
+                    src={images.vertical}
+                    alt={refuge.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition duration-700 hover:scale-[1.02]"
+                  />
+                </picture>
+                <div className="flex flex-col justify-between p-6 sm:p-8 lg:p-10">
+                  <div>
+                    <p className="mb-4 text-xs uppercase tracking-[0.3em] text-[#445543]/70">
+                      0{index + 1}
+                    </p>
+                    <h3 className="text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+                      {refuge.name}
+                    </h3>
+                  </div>
+                  <div className="mt-10 grid gap-3">
+                    <RefugeFeature icon={<UsersRound />} label={t.refuges.capacity} />
+                    <RefugeFeature icon={<BedDouble />} label={t.refuges.layout} />
+                    <RefugeFeature icon={<CookingPot />} label={t.refuges.kitchen} />
+                    <RefugeFeature icon={<Flame />} label={t.refuges.heating} />
+                  </div>
+                </div>
+              </Reveal>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function RefugeFeature({
+  icon,
+  label,
+}: {
+  icon: ReactNode
+  label: string
+}) {
+  return (
+    <div className="flex items-center gap-4 border-t border-[#202626]/10 pt-3 text-sm font-medium leading-6 text-[#202626]/72">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center text-[#445543] [&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[1.6]">
+        {icon}
+      </span>
+      <span>{label}</span>
     </div>
   )
 }
 
 function FinalCtaSection({ t }: { t: Copy }) {
   return (
-    <section className="px-5 py-20 text-center sm:px-8 lg:px-12 lg:py-28">
-      <div className="mx-auto max-w-4xl">
-        <h2 className="text-balance text-5xl font-semibold leading-[1.02] tracking-[-0.04em] text-[#F3F1EC] sm:text-6xl lg:text-7xl">
+    <section className="bg-[#202626] px-5 py-20 text-center sm:px-8 lg:px-12 lg:py-28">
+      <Reveal className="mx-auto max-w-4xl">
+        <h2 className="text-balance text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-[#F3F1EC] sm:text-6xl lg:text-7xl">
           {t.finalCta.title}
         </h2>
         <a
           href="#waitlist"
-          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#ECEBE7] px-7 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-[#202626] transition hover:-translate-y-0.5 hover:bg-[#F3F1EC]"
+          className="mt-10 inline-flex min-h-14 items-center justify-center rounded-full bg-[#ECEBE7] px-8 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-[#202626] transition hover:-translate-y-0.5 hover:bg-[#F3F1EC]"
         >
           {t.finalCta.cta}
         </a>
-      </div>
+      </Reveal>
     </section>
   )
 }
 
 function Footer({ t }: { t: Copy }) {
   return (
-    <footer className="border-t border-[#ECEBE7]/10 px-5 py-8 sm:px-8 lg:px-12">
-      <div className="mx-auto flex max-w-7xl flex-col gap-5 text-sm text-[#D9D4C7]/64 sm:flex-row sm:items-center sm:justify-between">
+    <footer className="border-t border-[#ECEBE7]/10 px-5 py-10 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 text-sm text-[#D9D4C7]/64 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-semibold tracking-[0.18em] text-[#F3F1EC]">
           KULLINKO
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
           <a
-            className="transition hover:text-[#F3F1EC]"
+            className="min-h-11 transition hover:text-[#F3F1EC] sm:min-h-0"
             href="https://www.instagram.com/kullinko.refugiomalalcahuello/"
           >
             Instagram
           </a>
           <a
-            className="inline-flex items-center gap-2 transition hover:text-[#F3F1EC]"
+            className="inline-flex min-h-11 items-center gap-2 transition hover:text-[#F3F1EC] sm:min-h-0"
             href="mailto:kullinkospa@gmail.com"
           >
             <Mail className="h-4 w-4" aria-hidden="true" />
